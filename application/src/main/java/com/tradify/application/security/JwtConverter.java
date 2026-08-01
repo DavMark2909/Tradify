@@ -3,7 +3,6 @@ package com.tradify.application.security;
 import com.tradify.application.entity.User;
 import com.tradify.application.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,10 +12,11 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class JwtConverter extends Converter<Jwt, AbstractAuthenticationToken> {
+public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
 
     private final UserRepository userRepository;
 
@@ -38,11 +38,6 @@ public class JwtConverter extends Converter<Jwt, AbstractAuthenticationToken> {
         JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
         Collection<GrantedAuthority> authorities = authoritiesConverter.convert(jwt);
 
-        return new JwtAuthenticationToken(jwt, authorities, username);
-    }
-
-    @Override
-    public <U> Converter<Jwt, @Nullable U> andThen(Converter<? super AbstractAuthenticationToken, ? extends @Nullable U> after) {
-        return Converter.super.andThen(after);
+        return new JwtAuthenticationToken(jwt, authorities, Objects.requireNonNull(username));
     }
 }
