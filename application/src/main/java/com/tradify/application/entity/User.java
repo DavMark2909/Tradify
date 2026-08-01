@@ -19,4 +19,7 @@ public class User {
     private String name;
     @Column(name = "last_name")
     private String lastName;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private CompanyProfile companyProfile;
 }
