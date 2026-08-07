@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
@@ -20,6 +21,7 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
     private CompanyProfile companyProfile;
 }

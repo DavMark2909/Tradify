@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "company_profiles")
 @Data
@@ -27,9 +29,9 @@ public class CompanyProfile {
     @Column(name = "is_logistics", nullable = false)
     private boolean isLogistics = false;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
-    private User user;
+//    maps by the variable name in user
+    @OneToMany(mappedBy = "companyProfile")
+    private Set<User> user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sector_id")
