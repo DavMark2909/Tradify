@@ -1,21 +1,45 @@
 package com.tradify.authorization.security;
 
 import com.tradify.authorization.entity.User;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 
+@Getter
 public class SecurityUser implements UserDetails {
 
-    private final User user;
-    private final Collection<? extends  GrantedAuthority> authorities;
+    private final String username;
+    private final String password;
+    private final String firstName;
+    private final String lastName;
+    private final Collection<? extends GrantedAuthority> authorities;
 
     public SecurityUser(User user) {
-        this.user = user;
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+
         this.authorities = user.getRoles().stream()
                 .map(role -> new SecurityRole(role.getName()))
                 .toList();
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -36,20 +60,5 @@ public class SecurityUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
-    }
-
-    @Override
-    public String getPassword() {
-        return user.getPassword();
-    }
-
-    @Override
-    public String getUsername() {
-        return user.getUsername();
     }
 }
