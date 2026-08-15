@@ -1,6 +1,6 @@
 package com.tradify.application.dto;
 
-public record CreateCompanyProfileDto(
+public record CompanyProfileDto(
         String name,
         String description,
         long sector,
