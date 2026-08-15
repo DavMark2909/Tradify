@@ -29,11 +29,14 @@ public class CompanyProfile {
     @Column(name = "is_logistics", nullable = false)
     private boolean isLogistics = false;
 
-//    maps by the variable name in user
     @OneToMany(mappedBy = "companyProfile")
-    private Set<User> user;
+    private Set<User> users;
+
+    @OneToMany(mappedBy = "supplier")
+    private Set<Product> products;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sector_id")
     private Sector sector;
+
 }

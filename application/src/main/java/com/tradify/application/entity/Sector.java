@@ -23,4 +23,8 @@ public class Sector {
 
     @OneToMany(mappedBy = "sector")
     private Set<CompanyProfile> companies;
+
+    @OneToMany(mappedBy = "sector")
+    private Set<Product> products;
+
 }
