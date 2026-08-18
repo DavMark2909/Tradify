@@ -26,9 +26,13 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
         String name = jwt.getClaimAsString("name");
         String lastname = jwt.getClaimAsString("lastname");
 
+        Number extractedId = jwt.getClaim("userId");
+        Long userId = (extractedId != null) ? extractedId.longValue() : null;
+
         userRepository.findByUsername(username).orElseGet(() -> {
 
             User user = new User();
+            user.setId(userId);
             user.setUsername(username);
             user.setName(name);
             user.setLastName(lastname);
