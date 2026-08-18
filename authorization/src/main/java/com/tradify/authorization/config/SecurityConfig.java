@@ -73,6 +73,7 @@ public class SecurityConfig {
                 if (principal.getPrincipal() instanceof SecurityUser securityUser) {
 
                     // creating custom claims to be extracted in resource server
+                    context.getClaims().claim("userId", securityUser.getId());
                     context.getClaims().claim("username", securityUser.getUsername());
                     context.getClaims().claim("name", securityUser.getFirstName());
                     context.getClaims().claim("lastname", securityUser.getLastName());

@@ -13,6 +13,7 @@ public class SecurityUser implements UserDetails {
     private final String password;
     private final String firstName;
     private final String lastName;
+    private final long id;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public SecurityUser(User user) {
@@ -21,6 +22,7 @@ public class SecurityUser implements UserDetails {
 
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.id = user.getId();
 
         this.authorities = user.getRoles().stream()
                 .map(role -> new SecurityRole(role.getName()))
