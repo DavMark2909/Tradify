@@ -26,14 +26,15 @@ public class HomeController {
     private final HomeService homeService;
 
     @GetMapping("/")
-    public ResponseEntity<HomeViewDto> home(JwtAuthenticationToken authentication,
+    public ResponseEntity<HomeViewDto> home(JwtAuthenticationToken authenticationToken,
                                        @RequestParam(defaultValue = "20") int page,
-                                       @RequestParam(defaultValue = "0") int size) {
-        String username = authentication.getName();
-        User user = userService.findByUsername(username);
+                                       @RequestParam(defaultValue = "0") int size
+    ){
+
+        Long userId = (Long) authenticationToken.getTokenAttributes().get("userId");
 
         List<ProductDto> trendingProducts = homeService.getTrendingProducts();
-        Page<SavedItemDto> savedItemDtoPage = homeService.getSavedItems(user.getId(), page,size);
+        Page<SavedItemDto> savedItemDtoPage = homeService.getSavedItems(userId, page,size);
         HomeViewDto homeDto = new HomeViewDto(trendingProducts, savedItemDtoPage);
         return ResponseEntity.ok(homeDto);
     }
