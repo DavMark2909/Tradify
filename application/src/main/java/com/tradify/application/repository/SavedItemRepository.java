@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SavedItemRepository extends JpaRepository<SavedItem, Long> {
 
     Page<SavedItem> findByBuyerId(Long userId, Pageable pageable);
+    long deleteByIdAndBuyer_Id(Long id, Long buyerId);
 }
