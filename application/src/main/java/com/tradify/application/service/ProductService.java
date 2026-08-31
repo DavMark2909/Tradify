@@ -3,6 +3,7 @@ package com.tradify.application.service;
 import com.tradify.application.dto.ProductCreateDto;
 import com.tradify.application.dto.ProductDto;
 import com.tradify.application.entity.Product;
+import com.tradify.application.exception.ObjectNotFoundException;
 import com.tradify.application.kafka.dto.ProductEvent;
 import com.tradify.application.kafka.dto.ProductPayload;
 import com.tradify.application.kafka.producers.ProductEventProducer;
@@ -30,8 +31,31 @@ public class ProductService {
     }
 
     @Transactional
-    public Product createProduct(ProductCreateDto dto) {
+    public void createProduct(ProductCreateDto dto) {
         Product product = new Product();
+        setProductDetails(product, dto);
+
+        product.setSector(sectorRepository.getReferenceById(dto.sectorId()));
+        product.setSupplier(companyProfileRepository.getReferenceById(dto.supplierCompanyId()));
+
+        Product savedProduct = productRepository.save(product);
+        ProductPayload payload = setProductPayload(savedProduct);
+
+        productEventProducer.publishProductCreated(ProductEvent.created(payload));
+    }
+
+    @Transactional
+    public void updateProduct(ProductCreateDto dto, long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Product not found"));
+        setProductDetails(product, dto);
+
+        Product savedProduct = productRepository.save(product);
+        ProductPayload payload = setProductPayload(savedProduct);
+
+        productEventProducer.publishProductCreated(ProductEvent.updated(payload));
+    }
+
+    private void setProductDetails(Product product, ProductCreateDto dto){
         product.setTitle(dto.title());
         product.setDescription(dto.description());
         product.setPrice(dto.price());
@@ -39,13 +63,10 @@ public class ProductService {
         product.setUnitOfMeasure(dto.unitOfMeasure());
         product.setAvailableQuantity(dto.availableQuantity());
         product.setStatus(dto.status());
+    }
 
-        product.setSector(sectorRepository.getReferenceById(dto.sectorId()));
-        product.setSupplier(companyProfileRepository.getReferenceById(dto.supplierCompanyId()));
-
-        Product savedProduct = productRepository.save(product);
-
-        ProductPayload payload = new ProductPayload(
+    private ProductPayload setProductPayload(Product savedProduct){
+        return new ProductPayload(
                 savedProduct.getId(),
                 savedProduct.getSupplier().getId(),
                 savedProduct.getSector().getId(),
@@ -57,11 +78,8 @@ public class ProductService {
                 savedProduct.getAvailableQuantity(),
                 savedProduct.getStatus()
         );
-
-        productEventProducer.publishProductCreated(ProductEvent.created(payload));
-
-        return savedProduct;
     }
+
 
 
 }
