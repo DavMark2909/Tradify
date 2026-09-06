@@ -2,13 +2,16 @@ package com.tradify.application.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "sectors")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Sector {
 
