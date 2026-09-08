@@ -26,4 +26,10 @@ public class ProductController {
         productService.updateProduct(product, id);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity<Void> delete(@RequestParam long id) {
+        productService.deleteProduct(id);
+        return ResponseEntity.noContent().build();
+    }
 }
