@@ -4,8 +4,8 @@ public record CompanyProfileDto(
         String name,
         String description,
         long sector,
-        byte isSupplier,
-        byte isConsumer,
-        byte isLogistics
+        boolean isSupplier,
+        boolean isConsumer,
+        boolean isLogistics
 ) {
 }
