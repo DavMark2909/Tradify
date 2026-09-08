@@ -55,6 +55,11 @@ public class ProductService {
         productEventProducer.publishProductCreated(ProductEvent.updated(payload));
     }
 
+    public void deleteProduct(long id) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Product not found"));
+        productRepository.delete(product);
+    }
+
     private void setProductDetails(Product product, ProductCreateDto dto){
         product.setTitle(dto.title());
         product.setDescription(dto.description());

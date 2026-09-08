@@ -2,16 +2,25 @@ package com.tradify.application.service;
 
 import com.tradify.application.dto.AddUsersToCompanyDto;
 import com.tradify.application.dto.CompanyProfileDto;
+import com.tradify.application.dto.ProductDto;
 import com.tradify.application.entity.CompanyProfile;
+import com.tradify.application.entity.Product;
 import com.tradify.application.entity.Sector;
 import com.tradify.application.entity.User;
 import com.tradify.application.exception.ObjectNotFoundException;
+import com.tradify.application.mappers.ProductMapper;
 import com.tradify.application.repository.CompanyProfileRepository;
+import com.tradify.application.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -21,6 +30,7 @@ public class CompanyService {
     private final CompanyProfileRepository companyProfileRepository;
     private final SectorService sectorService;
     private final UserService userService;
+    private final ProductRepository productRepository;
 
     //    TODO: idea - we can launch the company via the agents. We can force it to search for particular items within the app,
     //    set the price, particular parameters, send messages, inquires, emails, etc
@@ -59,13 +69,33 @@ public class CompanyService {
 
     private CompanyProfile saveCompany(CompanyProfile companyProfile, Sector sector, CompanyProfileDto dto) {
         companyProfile.setName(dto.name());
-        companyProfile.setBuyer(dto.isConsumer() == 1);
-        companyProfile.setSupplier(dto.isSupplier() == 1);
-        companyProfile.setLogistics(dto.isLogistics() == 1);
+        companyProfile.setBuyer(dto.isConsumer());
+        companyProfile.setSupplier(dto.isSupplier());
+        companyProfile.setLogistics(dto.isLogistics());
         companyProfile.setDescription(dto.description());
         companyProfile.setSector(sector);
         return companyProfileRepository.save(companyProfile);
     }
 
+    @Transactional(readOnly = true)
+    public Page<ProductDto> getCompanyProducts(Long companyId, int pageNumber, int pageSize) {
+        Pageable pageReq = PageRequest.of(pageNumber, pageSize, Sort.by("createdAt").descending());
+        Page<Product> entityPage = productRepository.findBySupplierId(companyId, pageReq);
+        return entityPage.map(ProductMapper::toDto);
+    }
 
+    @Transactional
+    public void saveDefaultBuyer(String username) {
+        User user = userService.findByUsername(username);
+        CompanyProfile companyProfile = new CompanyProfile();
+        companyProfile.setBuyer(true);
+        companyProfile.setSupplier(false);
+        companyProfile.setLogistics(false);
+        companyProfile.setUsers(new HashSet<>(Set.of(user)));
+
+        companyProfileRepository.save(companyProfile);
+
+        user.setCompanyProfile(companyProfile);
+        userService.save(user);
+    }
 }

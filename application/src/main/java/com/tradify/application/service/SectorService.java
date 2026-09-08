@@ -1,5 +1,6 @@
 package com.tradify.application.service;
 
+import com.tradify.application.dto.SectorDto;
 import com.tradify.application.entity.Sector;
 import com.tradify.application.exception.ObjectNotFoundException;
 import com.tradify.application.repository.SectorRepository;
@@ -14,5 +15,13 @@ public class SectorService {
 
     public Sector findById(long id) throws ObjectNotFoundException {
         return sectorRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Sector not found for id " + id));
+    }
+
+//    TODO: it is important to add some default sectors
+    public Sector save(SectorDto sectorDto) {
+        Sector sector = new Sector();
+        sector.setName(sectorDto.name());
+        sector.setDescription(sectorDto.description());
+        return sectorRepository.save(sector);
     }
 }
