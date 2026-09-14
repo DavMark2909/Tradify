@@ -88,9 +88,12 @@ public class CompanyService {
     public void saveDefaultBuyer(String username) {
         User user = userService.findByUsername(username);
         CompanyProfile companyProfile = new CompanyProfile();
+        companyProfile.setDescription("Default Buyer");
+        companyProfile.setName("Default Buyer");
         companyProfile.setBuyer(true);
         companyProfile.setSupplier(false);
         companyProfile.setLogistics(false);
+        companyProfile.setSector(sectorService.findDefaultBuyerSector());
         companyProfile.setUsers(new HashSet<>(Set.of(user)));
 
         companyProfileRepository.save(companyProfile);
