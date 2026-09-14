@@ -11,15 +11,25 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
 public class FilterChain {
 
-    private final static List<String> allowedOrigins = Arrays.asList("*", "*");
-    private final static List<String> allowedMethods = Arrays.asList("*", "*");
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain asFilterChain(HttpSecurity http) throws Exception {
@@ -38,16 +48,7 @@ public class FilterChain {
 
         http.csrf(c -> c.disable());
 
-        http.cors(c -> {
-            CorsConfigurationSource source = request -> {
-                CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(allowedOrigins);
-                configuration.setAllowedMethods(allowedMethods);
-                configuration.setAllowedHeaders(List.of("*"));
-                return configuration;
-            };
-            c.configurationSource(source);
-        });
+        http.cors(c -> c.configurationSource(corsConfigurationSource()));
 
         return http.build();
     }
@@ -55,8 +56,11 @@ public class FilterChain {
     @Bean
     SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
+        http.cors(c -> c.configurationSource(corsConfigurationSource()));
+
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/login", "/register/**", "/css/**", "/js/**",
+                                "/favicon.ico", "/.well-known/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
