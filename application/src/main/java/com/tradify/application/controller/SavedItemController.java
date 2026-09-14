@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/saved-items")
+@RequestMapping("/api/saved-items")
 @RequiredArgsConstructor
 public class SavedItemController {
     private final SavedItemService savedItemService;
