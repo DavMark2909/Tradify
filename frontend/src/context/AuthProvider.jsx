@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import api from '../api';
 
 const AuthContext = createContext(null);
@@ -7,24 +7,29 @@ const GATEWAY_AUTH_URL = 'http://localhost:8081/oauth2/authorization/gateway-cli
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [status, setStatus] = useState('pending'); // 'pending' | 'authenticated' | 'error'
+  const isMountedRef = useRef(true);
 
-  useEffect(() => {
-    let isMounted = true;
-    api.get('/user/me')
+  const refreshUser = () => {
+    return api.get('/user/me')
       .then((res) => {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
         setUser(res.data);
         setStatus('authenticated');
       })
       .catch((err) => {
-        if (!isMounted) return;
+        if (!isMountedRef.current) return;
         if (err.response?.status === 401) {
           window.location.href = GATEWAY_AUTH_URL;
         } else {
           setStatus('error');
         }
       });
-    return () => { isMounted = false; };
+  };
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    refreshUser();
+    return () => { isMountedRef.current = false; };
   }, []);
 
   if (status === 'pending') {
@@ -34,7 +39,7 @@ export function AuthProvider({ children }) {
     return <div>Something went wrong loading your account. Please try again later.</div>;
   }
 
-  return <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, refreshUser }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
