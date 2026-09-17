@@ -1,6 +1,6 @@
 import logging
 
-# from app.consumers.product_consumer import ProductEventConsumer
+from app.consumers.product_consumer import ProductEventConsumer
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -8,12 +8,10 @@ logger = logging.getLogger(__name__)
 def main():
     logger.info("Starting Python AI Agent Microservice...")
 
-    # 1. Initialize dependencies (Constructor Injection)
-    # If we had an Elasticsearch client, we would instantiate it here and pass it in.
+    product_consumer = ProductEventConsumer()
 
-    # 2. Start the blocking Kafka listener
     try:
-
+        product_consumer.start_listening()
     except KeyboardInterrupt:
         logger.info("Service shutting down gracefully...")
 
