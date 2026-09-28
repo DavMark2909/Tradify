@@ -1,0 +1,10 @@
+.status-message {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text);
+}
+
+.status-message--error {
+  color: var(--error);
+}
