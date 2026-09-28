@@ -1,0 +1,75 @@
+.menu-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+
+.menu-drawer-backdrop--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.menu-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: var(--drawer-w);
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  transform: translateX(100%);
+  transition: transform 200ms ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 1.5rem 1rem;
+}
+
+.menu-drawer--open {
+  transform: translateX(0);
+}
+
+.menu-drawer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-drawer__link {
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius);
+  color: var(--text);
+  text-decoration: none;
+  text-align: left;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.menu-drawer__link:hover {
+  background: var(--surface-hover);
+  color: var(--text-h);
+}
+
+.menu-drawer__account {
+  border-top: 1px solid var(--border);
+  padding-top: 1rem;
+  text-align: left;
+}
+
+.menu-drawer__account-name {
+  margin: 0;
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.menu-drawer__account-company {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 14px;
+}
