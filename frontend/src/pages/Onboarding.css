@@ -1,0 +1,52 @@
+.onboarding-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--backdrop);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.onboarding-card {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  width: min(420px, 90vw);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.onboarding-choice {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.onboarding-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.onboarding-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.onboarding-form-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.onboarding-error {
+  color: var(--error);
+  margin-top: 1rem;
+}
