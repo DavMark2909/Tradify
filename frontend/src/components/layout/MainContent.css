@@ -1,0 +1,7 @@
+.main-content {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  min-height: 0;
+}
