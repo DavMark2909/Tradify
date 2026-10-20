@@ -83,13 +83,14 @@ class ProductEventConsumer:
 
             logger.info(f"Received event: {event.eventType} for Product ID: {event.payload.productId}")
 
-            if event.eventType == "PRODUCT_CREATED":
-                self._handle_product_created(event.payload)
+            # indexing is an upsert by productId, so updates re-embed and overwrite the document
+            if event.eventType in ("PRODUCT_CREATED", "PRODUCT_UPDATED"):
+                self._handle_product_upsert(event.payload)
 
         except Exception as e:
             logger.error(f"Failed to process message from partition {msg.partition()} at offset {msg.offset()}: {e}")
 
-    def _handle_product_created(self, payload: ProductPayload):
+    def _handle_product_upsert(self, payload: ProductPayload):
         rich_text = f"{payload.title} {payload.description or ''} {payload.unitOfMeasure}".strip()
 
         # generation of the dense vector
