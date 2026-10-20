@@ -20,7 +20,7 @@ public class ProductEventProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void publishProductCreated(ProductEvent event) {
+    public void publish(ProductEvent event) {
         String partitionKey = String.valueOf(event.payload().supplierCompanyId());
 
         CompletableFuture<SendResult<String, ProductEvent>> future =
