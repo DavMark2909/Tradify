@@ -19,4 +19,8 @@ public record ProductEvent(
                 payload
         );
     }
+
+    public static ProductEvent updated(ProductPayload payload) {
+        return new ProductEvent(UUID.randomUUID().toString(), "PRODUCT_UPDATED", Instant.now().toString(), 1, payload);
+    }
 }
