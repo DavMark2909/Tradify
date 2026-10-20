@@ -9,7 +9,7 @@ public record ProductCreateDto(
         String currency,
         String unitOfMeasure,
         BigDecimal availableQuantity,
-        String status,
-        Long sectorId,
-        Long supplierCompanyId
+//        status is set to available by default
+        String status
+//        todo: change the endpoint to get the info about the company from the user profile
 ) {}
