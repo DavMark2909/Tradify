@@ -1,10 +1,22 @@
+import { useNavigate } from 'react-router-dom';
 import './SellerActionPanel.css';
 
-const ACTIONS = ['View my items', 'View statistics', 'Modify items'];
+// TODO: fill in the route for each action
+const ACTION_PATHS = {
+  'View products': '/company-items',
+  'View statistics': '/company-items',
+  'Modify items': '/company-items',
+};
+
+const ACTIONS = Object.keys(ACTION_PATHS);
 
 export default function SellerActionPanel({ className = '' }) {
-  // TODO: wire to real routes once those views exist
-  const handleClick = () => {};
+  const navigate = useNavigate();
+
+  const handleClick = (action) => {
+    const path = ACTION_PATHS[action];
+    if (path) navigate(path);
+  };
 
   return (
     <div className={`seller-action-panel ${className}`}>
@@ -12,7 +24,7 @@ export default function SellerActionPanel({ className = '' }) {
       <ul className="seller-action-panel__list">
         {ACTIONS.map((action) => (
           <li key={action}>
-            <button type="button" className="seller-action-panel__item" onClick={handleClick}>
+            <button type="button" className="seller-action-panel__item" onClick={() => handleClick(action)}>
               {action}
             </button>
           </li>
