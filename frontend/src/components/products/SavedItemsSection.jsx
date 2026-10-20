@@ -1,7 +1,7 @@
 import ProductCarousel from './ProductCarousel';
 import ProductGrid from './ProductGrid';
 import StatusMessage from '../common/StatusMessage';
-import './SavedItemsSection.css';
+import './styles/SavedItemsSection.css';
 
 export default function SavedItemsSection({ items, previewItems, status, viewAll, onToggleViewAll }) {
   const canViewAll = items.length > previewItems.length;

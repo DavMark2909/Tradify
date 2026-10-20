@@ -1,6 +1,6 @@
 import ProductGrid from './ProductGrid';
 import StatusMessage from '../common/StatusMessage';
-import './HotPicksSection.css';
+import './styles/HotPicksSection.css';
 
 export default function HotPicksSection({ products, status }) {
   return (

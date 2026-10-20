@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import ProductCard from './ProductCard';
 import { ChevronLeftIcon, ChevronRightIcon } from '../icons/Icons';
-import './ProductCarousel.css';
+import './styles/ProductCarousel.css';
 
 export default function ProductCarousel({ products }) {
   const trackRef = useRef(null);

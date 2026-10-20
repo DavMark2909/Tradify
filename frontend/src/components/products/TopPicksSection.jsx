@@ -1,6 +1,6 @@
 import ProductCarousel from './ProductCarousel';
 import StatusMessage from '../common/StatusMessage';
-import './TopPicksSection.css';
+import './styles/TopPicksSection.css';
 
 export default function TopPicksSection({ products, status }) {
   return (
