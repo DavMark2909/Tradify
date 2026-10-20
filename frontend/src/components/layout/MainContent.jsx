@@ -1,7 +1,7 @@
 import TopPicksSection from '../products/TopPicksSection';
 import SavedItemsSection from '../products/SavedItemsSection';
 import HotPicksSection from '../products/HotPicksSection';
-import './MainContent.css';
+import './styles/MainContent.css';
 
 export default function MainContent({
   topPicks,

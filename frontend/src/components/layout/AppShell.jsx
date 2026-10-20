@@ -1,4 +1,4 @@
-import './AppShell.css';
+import './styles/shell.css';
 
 export default function AppShell({ header, sidebar, main }) {
   return (
