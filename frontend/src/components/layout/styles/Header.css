@@ -1,0 +1,25 @@
+.header {
+  grid-area: header;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: var(--header-h);
+  padding: 0 1.5rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-sizing: border-box;
+  z-index: 10;
+}
+
+.header__brand {
+  flex: 0 0 auto;
+  color: var(--text-h);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.header__search {
+  flex: 1 1 auto;
+  max-width: 60%;
+  margin-left: auto;
+}

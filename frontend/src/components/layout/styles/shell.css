@@ -1,0 +1,10 @@
+.app-shell {
+  display: grid;
+  grid-template-rows: var(--header-h) 1fr;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  grid-template-areas:
+    'header header'
+    'sidebar main';
+  height: 100svh;
+  width: 100%;
+}
