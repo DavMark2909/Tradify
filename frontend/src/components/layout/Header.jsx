@@ -1,6 +1,6 @@
 import SearchBar from '../search/SearchBar';
 import MenuButton from '../menu/MenuButton';
-import './Header.css';
+import './styles/Header.css';
 
 export default function Header({ onToggleMenu, onSearch, isMenuOpen }) {
   return (
