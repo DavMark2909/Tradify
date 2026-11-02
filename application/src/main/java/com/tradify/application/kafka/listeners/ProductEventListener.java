@@ -10,10 +10,10 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Component
 @AllArgsConstructor
 public class ProductEventListener {
+//    listens to ApplicationEventPublisher. When it is fired, it checks the attached type and does routing based on it
 
     private final ProductEventProducer productEventProducer;
 
-//    fires only once the product is committed, so a rollback never reaches Kafka
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onProductEvent(ProductEvent event) {
         productEventProducer.publish(event);
