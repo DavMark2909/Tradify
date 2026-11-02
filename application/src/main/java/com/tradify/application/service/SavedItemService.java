@@ -1,12 +1,17 @@
 package com.tradify.application.service;
 
 import com.tradify.application.dto.SavedItemDto;
+import com.tradify.application.entity.Product;
 import com.tradify.application.entity.SavedItem;
 import com.tradify.application.entity.User;
+import com.tradify.application.exception.ObjectNotFoundException;
+import com.tradify.application.kafka.dto.ActivityEvent;
+import com.tradify.application.kafka.dto.ActivityPayload;
 import com.tradify.application.repository.ProductRepository;
 import com.tradify.application.repository.SavedItemRepository;
 import com.tradify.application.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +29,7 @@ public class SavedItemService {
     private final SavedItemRepository savedItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Transactional(readOnly = true)
@@ -37,11 +43,28 @@ public class SavedItemService {
 
     @Transactional
     public void createNewSavedItem(Long userId, long productId) {
-        SavedItem savedItem = new SavedItem();
 //        using the power of hibernates to set the foreign key by referencing to the proxy object w/o the actual request to DB
-        savedItem.setBuyer(userRepository.getReferenceById(userId));
-        savedItem.setProduct(productRepository.getReferenceById(productId));
+//        HOWEVER: this approach is no longer valid as i need the actual instances to create a kafka event
+//        savedItem.setBuyer(userRepository.getReferenceById(userId));
+//        savedItem.setProduct(productRepository.getReferenceById(productId));
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ObjectNotFoundException("Product not found"));
+        User buyer = userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("User not found"));
+
+        SavedItem savedItem = new SavedItem();
+        savedItem.setBuyer(buyer);
+        savedItem.setProduct(product);
         savedItemRepository.save(savedItem);
+
+        Long companyId = buyer.getCompanyProfile() != null ? buyer.getCompanyProfile().getId() : null;
+        ActivityPayload payload = new ActivityPayload(
+                product.getId(),
+                product.getSector().getId(),
+                product.getSupplier().getId()
+        );
+        //        notifies listeners to call for a producer based on the type. Here - ActivityEvent
+        eventPublisher.publishEvent(ActivityEvent.productSaved(userId, companyId, payload));
     }
 
     @Transactional
