@@ -5,8 +5,11 @@ import com.tradify.application.dto.ProductDto;
 import com.tradify.application.entity.CompanyProfile;
 import com.tradify.application.entity.Product;
 import com.tradify.application.exception.ObjectNotFoundException;
+import com.tradify.application.kafka.dto.ActivityEvent;
+import com.tradify.application.kafka.dto.ActivityPayload;
 import com.tradify.application.kafka.dto.ProductEvent;
 import com.tradify.application.kafka.dto.ProductPayload;
+import com.tradify.application.kafka.producers.ActivityEventProducer;
 import com.tradify.application.mappers.ProductMapper;
 import com.tradify.application.repository.CompanyProfileRepository;
 import com.tradify.application.repository.ProductRepository;
@@ -16,7 +19,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -27,6 +29,7 @@ public class ProductService {
     private final SectorRepository sectorRepository;
     private final CompanyProfileRepository companyProfileRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private ActivityEventProducer activityEventProducer;
 
     public List<ProductDto> getTrendingProducts() {
         return productRepository.findTop10ByOrderByCreatedAtDesc().stream().map(ProductMapper::toDto).toList();
@@ -43,6 +46,7 @@ public class ProductService {
         Product savedProduct = productRepository.save(product);
         ProductPayload payload = setProductPayload(savedProduct);
 
+//        notifies listeners to call for a producer
         eventPublisher.publishEvent(ProductEvent.created(payload));
     }
 
@@ -60,6 +64,15 @@ public class ProductService {
     public void deleteProduct(long id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Product not found"));
         productRepository.delete(product);
+    }
+
+//    transaction is needed as ProductMapper will extract company name from the product
+    @Transactional(readOnly = true)
+    public ProductDto getProductById(long id, long userId, long companyId) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Product not found"));
+        activityEventProducer.publish(ActivityEvent.productViewed(userId, companyId,
+                new ActivityPayload(product.getId(), product.getSector().getId(), product.getSupplier().getId())));
+        return ProductMapper.toDto(product);
     }
 
     private void setProductDetails(Product product, ProductUpdateDto dto){
