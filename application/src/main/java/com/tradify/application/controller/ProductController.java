@@ -1,5 +1,6 @@
 package com.tradify.application.controller;
 
+import com.tradify.application.dto.ProductDto;
 import com.tradify.application.dto.ProductUpdateDto;
 import com.tradify.application.entity.CompanyProfile;
 import com.tradify.application.entity.User;
@@ -37,5 +38,12 @@ public class ProductController {
     public ResponseEntity<Void> delete(@RequestParam long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/get-item")
+    public ResponseEntity<ProductDto> getItem(@RequestParam long id, JwtAuthenticationToken token) {
+        User byUsername = userService.findByUsernameWithCompany(token.getName());
+        CompanyProfile companyProfile = byUsername.getCompanyProfile();
+        return ResponseEntity.ok(productService.getProductById(id, byUsername.getId(), companyProfile.getId()));
     }
 }
