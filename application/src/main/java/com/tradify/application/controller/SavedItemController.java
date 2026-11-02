@@ -22,7 +22,7 @@ public class SavedItemController {
     @GetMapping("/view")
     public ResponseEntity<Page<SavedItemDto>> view(JwtAuthenticationToken authenticationToken,
                                                    @RequestParam(defaultValue = "20") int page,
-                                                   @RequestParam(defaultValue = "0") int size
+                                                   @RequestParam(defaultValue = "20") int size
     ){
         Long userId = (Long) authenticationToken.getTokenAttributes().get("userId");
         return ResponseEntity.ok(savedItemService.getSavedItems(userId, page,size));

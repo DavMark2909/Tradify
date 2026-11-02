@@ -49,7 +49,7 @@ public class CompanyController {
     @GetMapping("/all-product")
     public ResponseEntity<Page<ProductDto>> getAllProduct(@RequestParam long id,
                                                           @RequestParam(defaultValue = "20") int page,
-                                                          @RequestParam(defaultValue = "0") int size){
+                                                          @RequestParam(defaultValue = "20") int size){
         return ResponseEntity.ok(companyService.getCompanyProducts(id, page, size));
     }
 }
