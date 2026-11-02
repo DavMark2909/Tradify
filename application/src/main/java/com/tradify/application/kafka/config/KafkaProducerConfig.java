@@ -1,5 +1,6 @@
 package com.tradify.application.kafka.config;
 
+import com.tradify.application.kafka.dto.ActivityEvent;
 import com.tradify.application.kafka.dto.ProductEvent;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -31,14 +32,31 @@ public class KafkaProducerConfig {
         return props;
     }
 
-//    factory and template for the "product-event" topic
     @Bean(name = "productProducerFactory")
     public ProducerFactory<String, ProductEvent> productProducerFactory() {
         return new DefaultKafkaProducerFactory<>(getBaseConfig());
     }
+
     @Bean(name = "productKafkaTemplate")
     public KafkaTemplate<String, ProductEvent> productKafkaTemplate(
             @Qualifier("productProducerFactory") ProducerFactory<String, ProductEvent> factory) {
+        return new KafkaTemplate<>(factory);
+    }
+
+//    configuring producer for tracking event activity
+    @Bean(name = "activityProducerFactory")
+    public ProducerFactory<String, ActivityEvent> activityProducerFactory() {
+        Map<String, Object> props = getBaseConfig();
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
+        props.put(ProducerConfig.LINGER_MS_CONFIG, 20);           // small batching window
+        props.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 1000);      // if Kafka is down, never block a user request for long
+        return new DefaultKafkaProducerFactory<>(props);
+    }
+
+//    template for event activity tracking
+    @Bean(name = "activityKafkaTemplate")
+    public KafkaTemplate<String, ActivityEvent> activityKafkaTemplate(
+            @Qualifier("activityProducerFactory") ProducerFactory<String, ActivityEvent> factory) {
         return new KafkaTemplate<>(factory);
     }
 }
