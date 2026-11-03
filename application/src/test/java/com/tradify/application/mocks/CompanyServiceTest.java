@@ -40,7 +40,7 @@ public class CompanyServiceTest {
     private CompanyService companyService;
 
     private Sector createSector(String name, String description) {
-        return sectorService.save(new SectorDto(name, description));
+        return sectorService.save(new SectorDto(0, name, description));
     }
 
     @Test
